@@ -1,0 +1,99 @@
+
+.ftstcall {
+    font-family: "fontastic-all" !important;
+}
+
+/*
+    link style
+*/
+
+
+.links path {
+    stroke: #999;
+
+    fill: none;
+    stroke-width: 2px;
+}
+
+.links path.focus {
+    stroke: black;
+}
+
+
+/*
+    node style
+*/
+
+.nodes {
+    cursor: pointer;
+}
+
+.nodes .node_container text {
+    text-anchor: middle;
+    font-size: 25px;
+    fill: #444444;
+}
+
+.nodes .node_container circle {
+    stroke-width: 5;
+}
+
+.nodes .node_container.stat_normal circle {
+    stroke: #1ca2db;
+    fill: rgba(53, 186, 246, 0.67);
+}
+
+.nodes .node_container.stat_abnormal circle {
+    stroke: #E5F1B6;
+    fill: rgba(229, 241, 182, 0.67);
+}
+
+.nodes .node_container.stat_error circle {
+    stroke: #ff4200;
+    fill: rgba(214, 100, 62, 0.67);
+}
+
+.nodes .node_container.stat_down circle {
+    stroke: #adabab;
+    fill: rgba(193, 193, 193, 0.67);
+}
+
+.nodes .node_container.stat_unknown circle {
+    stroke: #604c45;
+    fill: rgba(99, 77, 69, 0.67);
+}
+
+.nodes .node_container.focus circle {
+    stroke: black !important;
+}
+
+
+
+/*
+    description style
+*/
+.desc g text {
+    text-anchor: middle;
+}
+
+
+/*
+    tooltip style
+*/
+.tooltip {
+    line-height: 1;
+    font-weight: bold;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 2px;
+    z-index: 100;
+}
+
+
+
+/* debug: show intermediate nodes */
+.intermediate_nodes {
+    stroke: #000;
+    stroke-width: 1.5px;
+}

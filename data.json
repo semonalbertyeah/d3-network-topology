@@ -1,9 +1,9 @@
 {
     "topo": {
         "nodes": [
-            {"knmp_on": false, "snmp_on": false, "ip": "192.168.2.55", "vlan": 1, "flag": 0, "netmask": "255.255.255.0", "device_name": "device_2", "mac": "00-11-22-33-44-55", "ip_on": false, "id": "s2", "gateway": "0.0.0.0"}, 
-            {"knmp_on": false, "snmp_on": false, "ip": "192.168.2.66", "vlan": 1, "flag": 0, "netmask": "255.255.255.0", "device_name": "device_1", "mac": "11-22-33-44-55-66", "ip_on": false, "id": "s1", "gateway": "0.0.0.0"},
-            {"knmp_on": false, "snmp_on": false, "ip": "192.168.2.77", "vlan": 1, "flag": 0, "netmask": "255.255.255.0", "device_name": "device_3", "mac": "22-33-44-55-66-77", "ip_on": false, "id": "s3", "gateway": "0.0.0.0"},
+            {"knmp_on": false, "snmp_on": true, "ip": "192.168.2.55", "vlan": 1, "flag": 0, "netmask": "255.255.255.0", "device_name": "device_2", "mac": "00-11-22-33-44-55", "ip_on": false, "id": "s2", "gateway": "0.0.0.0"}, 
+            {"knmp_on": true, "snmp_on": true, "ip": "192.168.2.66", "vlan": 1, "flag": 0, "netmask": "255.255.255.0", "device_name": "device_1", "mac": "11-22-33-44-55-66", "ip_on": true, "id": "s1", "gateway": "0.0.0.0"},
+            {"knmp_on": true, "snmp_on": false, "ip": "192.168.2.77", "vlan": 1, "flag": 0, "netmask": "255.255.255.0", "device_name": "device_3", "mac": "22-33-44-55-66-77", "ip_on": true, "id": "s3", "gateway": "0.0.0.0"},
             {"knmp_on": false, "snmp_on": false, "ip": "192.168.2.99", "vlan": 1, "flag": 0, "netmask": "255.255.255.0", "device_name": "device_4", "mac": "44-55-66-77-88-99", "ip_on": false, "id": "s4", "gateway": "0.0.0.0"},
             {"knmp_on": true, "snmp_on": true, "ip": "192.168.2.33", "vlan": 1, "flag": 0, "netmask": "255.255.255.0", "device_name": "device_0", "mac": "55-66-77-88-99-00", "ip_on": true, "id": "s0", "gateway": "0.0.0.0"}],
 

@@ -21,6 +21,11 @@
     <div>
         <button id="load_btn">Load</button>
         <button id="animated_btn">Static</button>
+        <select id="desc_field_selector">
+            <option value="mac" selected>MAC</option>
+            <option value='ip'>IP</option>
+            <option value='device_name'>Name</option>
+        </select>
     </div>
     <svg width="960" height="600" id="topo_container">
         <rect id="view_container" x="0" y="0" width="960" height="600"></rect>
@@ -141,25 +146,33 @@
                 /*
                     tooltip
                 */
-                var node_tip = d3.tip().attr('class', 'tooltip').html(function(d) {
-                    return "<p><strong>MAC:</strong> " + d.mac + "</p>" +
-                           "<p><strong>IP:</strong>" + d.ip + "</p>" +
-                           "<p><strong>VLAN:</strong>" + d.vlan + "</p>" +
-                           "<p><strong>Name:</strong>" + d.device_name + "</p>";
-                });
+                var node_tip = d3.tip()
+                    .attr('class', 'tooltip')
+                    .offset([-10, 0])
+                    .html(function(d) {
+                        return "<p><strong class='title'>MAC:</strong> " + d.mac + "</p>" +
+                               "<p><strong class='title'>IP:</strong>" + d.ip + "</p>" +
+                               "<p><strong class='title'>Netmask:</strong>" + d.netmask + "</p>" +
+                               "<p><strong class='title'>Gateway:</strong>" + d.gateway + "</p>" +
+                               "<p><strong class='title'>VLAN:</strong>" + d.vlan + "</p>" +
+                               "<p><strong class='title'>Name:</strong>" + d.device_name + "</p>";
+                    });
                 svg.call(node_tip);
 
-                var link_tip = d3.tip()
-                        .attr('class', 'tooltip')
-                        .followMouse(true)
-                        .html(function(d) {
-                            return d['source']['mac'] + ':' + d['source_port_disp'] + 
-                                   ' ---- ' + 
-                                   d['target']['mac'] + ':' + d['target_port_disp'];
-                        });
-                svg.call(link_tip);
+                // var link_tip = d3.tip()
+                //         .attr('class', 'tooltip')
+                //         .followMouse(true)
+                //         .html(function(d) {
+                //             return d['source']['mac'] + ':' + d['source_port_disp'] + 
+                //                    ' ---- ' + 
+                //                    d['target']['mac'] + ':' + d['target_port_disp'];
+                //         });
+                // svg.call(link_tip);
 
-
+                var link_src_tip = d3.tip().attr('class', 'tooltip'),
+                    link_dst_tip = d3.tip().attr('class', 'tooltip');
+                svg.call(link_src_tip);
+                svg.call(link_dst_tip);
 
 
                 if (animated) {
@@ -177,7 +190,9 @@
                     'drag': drag,
                     'zoom': zoom,
                     'node_tip': node_tip,
-                    'link_tip': link_tip
+                    // 'link_tip': link_tip,
+                    'link_source_tip': link_src_tip,
+                    'link_dest_tip': link_dst_tip
                 };
 
 
@@ -195,7 +210,9 @@
                 link_frc = topo['link_force'],
                 drag = topo['drag'],
                 node_tip = topo['node_tip'],
-                link_tip = topo['link_tip'],
+                // link_tip = topo['link_tip'],
+                link_src_tip = topo['link_source_tip'],
+                link_dst_tip = topo['link_dest_tip'],
                 svg = d3.select('svg#topo_container');
 
             d3.json("data.json", function(error, graph){
@@ -239,12 +256,130 @@
                 var new_link = link.enter()
                                     .append("path")
                                     .on('mouseover', function(d) {
+                                        var src_node, dst_node;
+                                        /*
+                                            focus on target link
+                                        */
                                         d3.select(this).classed('focus', true);
-                                        return link_tip.show.apply(this, arguments);
+
+                                        /*
+                                            focus on target and source node
+                                            and show tips.
+                                        */
+                                        svg.select('g.nodes').selectAll('g.node_container')
+                                            .each(function(node_d) {
+                                                if (node_d.id == d.source.id) {
+                                                    src_node = d3.select(this).classed('focus focusing', true);
+
+                                                }
+                                                else if (node_d.id == d.target.id) {
+                                                    dst_node = d3.select(this).classed('focus focusing', true);
+                                                }
+                                            });
+
+                                        /*
+                                            calculate tooltip position
+                                        */
+                                        var src_dir, dst_dir,
+                                            src_offset = [0, 0],
+                                            dst_offset = [0, 0],
+                                            min_distance = 20,
+                                            x_distance = src_node.datum().x - dst_node.datum().x,
+                                            y_distance = src_node.datum().y - dst_node.datum().y;
+
+                                        if (Math.abs(x_distance) > Math.abs(y_distance)) {
+                                            if (x_distance > 0) {
+                                                src_dir = 'e';
+                                                src_offset[1] = 5;
+                                                dst_dir = 'w';
+                                                dst_offset[1] = -5;
+                                            }
+                                            else {
+                                                src_dir = 'w';
+                                                src_offset[1] = -5;
+                                                dst_dir = 'e';
+                                                dst_offset[1] = 5;
+                                            }
+
+                                            if (Math.abs(y_distance) > min_distance) {
+                                                if (y_distance > 0) {
+                                                    src_dir = 's' + src_dir;
+                                                    src_offset = [-5, -(Math.sign(src_offset[1]) * 5)];
+                                                    dst_dir = 'n' + dst_dir;
+                                                    dst_offset = [5, -(Math.sign(dst_offset[1]) * 5)];
+                                                }
+                                                else {
+                                                    src_dir = 'n' + src_dir;
+                                                    src_offset = [5, -(Math.sign(src_offset[1]) * 5)];
+                                                    dst_dir = 's' + dst_dir;
+                                                    dst_offset = [-5, -(Math.sign(dst_offset[1]) * 5)];
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            if (y_distance > 0) {
+                                                src_dir = 's';
+                                                src_offset[0] = 5;
+                                                dst_dir = 'n';
+                                                dst_offset[0] = -5;
+                                            }
+                                            else {
+                                                src_dir = 'n';
+                                                src_offset[0] = -5;
+                                                dst_dir = 's';
+                                                dst_offset[0] = 5;
+                                            }
+
+                                            if (Math.abs(x_distance) > min_distance) {
+                                                if (x_distance > 0) {
+                                                    src_dir = src_dir + 'e';
+                                                    src_offset = [-(Math.sign(src_offset[0]) * 5), -5];
+                                                    dst_dir = dst_dir + 'w';
+                                                    dst_offset = [-(Math.sign(dst_offset[0]) * 5), 5];
+                                                }
+                                                else {
+                                                    src_dir = src_dir + 'w';
+                                                    src_offset = [-(Math.sign(src_offset[0]) * 5), 5];
+                                                    dst_dir = dst_dir + 'e';
+                                                    dst_offset = [-(Math.sign(dst_offset[0]) * 5), -5];
+                                                }
+                                            }
+                                        }
+
+                                        link_src_tip
+                                            .direction(src_dir)
+                                            .offset(src_offset)
+                                            .html("<strong>" + d.source_port_disp + "</strong>")
+                                            .show(src_node.node());
+
+                                        link_dst_tip
+                                            .direction(dst_dir)
+                                            .offset(dst_offset)
+                                            .html("<strong> " + d.target_port_disp + "</strong>")
+                                            .show(dst_node.node());
+
                                     })
                                     .on('mouseout', function(d) {
+                                        /*
+                                            move focus away from link.
+                                        */
                                         d3.select(this).classed('focus', false);
-                                        return link_tip.hide.apply(this, arguments);
+
+                                        /*
+                                            move focus away from target and source nodes
+                                            hide tips
+                                        */
+                                        svg.select('g.nodes').selectAll('g.node_container')
+                                            .each(function(node_d) {
+                                                if (node_d.id == d.source.id) {
+                                                    src_node = d3.select(this).classed('focus focusing', false);
+                                                    link_src_tip.hide();
+                                                }
+                                                else if (node_d.id == d.target.id) {
+                                                    dst_node = d3.select(this).classed('focus focusing', false);
+                                                    link_dst_tip.hide();
+                                                }
+                                            });
                                     });
 
 
@@ -565,6 +700,17 @@
                 me.text('Static');
             }
 
+        });
+
+        d3.select('select#desc_field_selector').on('change', function() {
+            var field = this.value,
+                desc_con = d3.select('svg#topo_container')
+                         .select('g.desc')
+                         .selectAll('g.desc_container');
+
+            desc_con.select('text').text(function(d) {
+                return d[field];
+            });
         });
 
         initialize_topo();

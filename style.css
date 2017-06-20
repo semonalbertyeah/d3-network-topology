@@ -12,7 +12,7 @@
     stroke: #999;
 
     fill: none;
-    stroke-width: 2px;
+    stroke-width: 3px;
 }
 
 .links path.focus {
@@ -86,8 +86,13 @@
     padding: 12px;
     background: rgba(0, 0, 0, 0.8);
     color: #fff;
-    border-radius: 2px;
+    border-radius: 10px;
     z-index: 100;
+}
+
+.tooltip strong.title {
+    display: inline-block;
+    width: 75px;
 }
 
 

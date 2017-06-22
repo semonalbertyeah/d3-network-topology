@@ -8,14 +8,21 @@
 */
 
 
-.links path {
+.links .link_container .link_item{
     stroke: #999;
 
     fill: none;
     stroke-width: 3px;
 }
 
-.links path.focus {
+.links .link_container .link_selector {
+    stroke: rgba(170, 160, 100, 0);
+
+    fill: none;
+    stroke-width: 9px;
+}
+
+.links .link_container.focus .link_item {
     stroke: black;
 }
 
